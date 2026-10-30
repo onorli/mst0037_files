@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Call option price: more steps</title><style>
+:root{--bg:#fff;--fg:#1b1b1b;--muted:#5f6b73;--line:#d9dee2;--acc:#1f78b4;--fcell:#eef6fb}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15181b;--fg:#e8eaec;--muted:#9aa5ad;--line:#333a40;--acc:#6ab0de;--fcell:#1d2a34}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}h1{font-size:1.5rem;margin:0 0 4px}h2{font-size:1.1rem;margin:28px 0 8px}
+.sec{color:var(--muted);margin:0 0 16px}p{margin:0 0 16px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.btn{display:inline-block;padding:10px 16px;border-radius:8px;border:1px solid var(--acc);color:var(--acc);text-decoration:none;font-weight:600}
+.btn.primary{background:var(--acc);color:#fff}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.sheet{border-collapse:collapse;font-size:14px;min-width:100%}
+.sheet th,.sheet td{border:1px solid var(--line);padding:6px 8px;white-space:nowrap;text-align:left}
+.sheet th{background:var(--line);color:var(--muted);font-weight:500;text-align:center}
+.sheet td.f{background:var(--fcell)}
+.hint{color:var(--muted);font-size:14px;margin:8px 0 0}
+.toggle{margin:12px 0 0;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;cursor:pointer}
+footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
+</style></head>
+<body><main>
+<h1>Call option price: more steps</h1>
+<p class="sec">Options booklet, section 4.2 &middot; MST0037</p>
+<p>Values the call on the three-step tree. The Price sheet holds the stock tree, the Option sheet the payoffs at the final nodes, the risk-neutral probabilities of reaching them and the discounted option value.</p>
+<div class="btns">
+<a class="btn primary" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fonorli%2Fmst0037_files%2Fmain%2Ffiles%2Foption_more_steps.xlsx">Open in browser</a>
+<a class="btn" href="https://raw.githubusercontent.com/onorli/mst0037_files/main/files/option_more_steps.xlsx">Download .xlsx</a>
+</div>
+<h2>Sheet: Price</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+</tr></thead><tbody>
+<tr><th>3</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P31</span></td>
+</tr>
+<tr><th>4</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I6*$C$6"><span>73.6492</span></td>
+</tr>
+<tr><th>5</th>
+<td><span>S0</span></td>
+<td><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P21</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>6</th>
+<td><span>u</span></td>
+<td><span>1.1378</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G8*$C$6"><span>64.7294</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>7</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P11</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P32</span></td>
+</tr>
+<tr><th>8</th>
+<td><span>d</span></td>
+<td class="f" data-formula="=1/C6"><span>0.8789</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=E10*$C$6"><span>56.89</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I6*$C$8"><span>56.89</span></td>
+</tr>
+<tr><th>9</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P22</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>10</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=C5"><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G8*$C$8"><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>11</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P12</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P33</span></td>
+</tr>
+<tr><th>12</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=E10*$C$8"><span>43.9445</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I10*$C$8"><span>43.9445</span></td>
+</tr>
+<tr><th>13</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P23</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>14</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G12*$C$8"><span>38.6223</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>15</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>P34</span></td>
+</tr>
+<tr><th>16</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I14*$C$8"><span>33.9447</span></td>
+</tr>
+</tbody></table></div>
+<h2>Sheet: Option</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+<th>L</th>
+<th>M</th>
+</tr></thead><tbody>
+<tr><th>2</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Risk neutral</span></td>
+</tr>
+<tr><th>3</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Probabilities</span></td>
+</tr>
+<tr><th>4</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C31</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>5</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,Price!K4-Option!$C$7)"><span>28.6492</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=C13^3"><span>0.1156</span></td>
+</tr>
+<tr><th>6</th>
+<td><span>S0</span></td>
+<td><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C21</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>7</th>
+<td><span>K</span></td>
+<td><span>45</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>8</th>
+<td><span>u</span></td>
+<td><span>1.1378</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C11</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C32</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>9</th>
+<td><span>r</span></td>
+<td><span>0.015</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,Price!K8-Option!$C$7)"><span>11.89</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=3*(1-C13)*C13^2"><span>0.3651</span></td>
+</tr>
+<tr><th>10</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C22</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>11</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=(M5*K5+M9*K9+M13*K13+M17*K17)*EXP(-1*C9)"><span>7.5389</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>12</th>
+<td><span>d</span></td>
+<td class="f" data-formula="=1/C8"><span>0.8789</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C12</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C33</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>13</th>
+<td><span>π</span></td>
+<td class="f" data-formula="=(EXP(C9/3)-C12)/(C8-C12)"><span>0.4871</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,Price!K12-Option!$C$7)"><span>0</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=3*(1-C13)^2*C13"><span>0.3844</span></td>
+</tr>
+<tr><th>14</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C23</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>15</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>16</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C34</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>17</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,Price!K16-Option!$C$7)"><span>0</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=(1-C13)^3"><span>0.1349</span></td>
+</tr>
+<tr><th>18</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>19</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=SUM(M5:M17)"><span>1</span></td>
+</tr>
+</tbody></table></div>
+<p class="hint">Shaded cells are formulas. On a PC, download the file to change the inputs and see the results update.</p>
+<button class="toggle" data-on="0">Show formulas</button>
+<footer><a href="https://onorli.github.io/mst0037_files/">All course files</a></footer>
+</main><script>
+document.querySelector('.toggle').addEventListener('click',function(){
+  var on=this.dataset.on==='1';document.querySelectorAll('td.f').forEach(function(td){
+    td.querySelector('span').textContent=on?td.dataset.value:td.dataset.formula;});
+  this.dataset.on=on?'0':'1';this.textContent=on?'Show formulas':'Show values';});
+document.querySelectorAll('td.f').forEach(function(td){td.dataset.value=td.querySelector('span').textContent;});
+</script></body></html>
