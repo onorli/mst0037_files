@@ -1318,7 +1318,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>6</th>
 <td><span>RF</span></td>
-<td class="f" data-formula="=&#x27;Binomial n steps&#x27;!E3"><span>0.015</span></td>
+<td class="f" data-formula="=&#x27;Binomial n steps&#x27;!E3/&#x27;Binomial n steps&#x27;!E2"><span>0.06</span></td>
 </tr>
 <tr><th>7</th>
 <td><span>Volatility</span></td>
@@ -1342,7 +1342,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>12</th>
 <td><span>(Rf+vol/2)T</span></td>
-<td class="f" data-formula="=(D6+D9/2)*D5"><span>0.0287</span></td>
+<td class="f" data-formula="=(D6+D9/2)*D5"><span>0.04</span></td>
 </tr>
 <tr><th>13</th>
 <td><span>sqrt(vol*T)</span></td>
@@ -1354,11 +1354,11 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>15</th>
 <td><span>d1</span></td>
-<td class="f" data-formula="=(D11+D12)/D13"><span>0.5998</span></td>
+<td class="f" data-formula="=(D11+D12)/D13"><span>0.6501</span></td>
 </tr>
 <tr><th>16</th>
 <td><span>d2</span></td>
-<td class="f" data-formula="=D15-D13"><span>0.3762</span></td>
+<td class="f" data-formula="=D15-D13"><span>0.4265</span></td>
 </tr>
 <tr><th>17</th>
 <td><span></span></td>
@@ -1366,11 +1366,11 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>18</th>
 <td><span>N(d1)</span></td>
-<td class="f" data-formula="=_xlfn.NORM.DIST(D15,0,1,1)"><span>0.7257</span></td>
+<td class="f" data-formula="=_xlfn.NORM.DIST(D15,0,1,1)"><span>0.7422</span></td>
 </tr>
 <tr><th>19</th>
 <td><span>N(d2)</span></td>
-<td class="f" data-formula="=_xlfn.NORM.DIST(D16,0,1,1)"><span>0.6466</span></td>
+<td class="f" data-formula="=_xlfn.NORM.DIST(D16,0,1,1)"><span>0.6651</span></td>
 </tr>
 <tr><th>20</th>
 <td><span></span></td>
@@ -1378,7 +1378,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>21</th>
 <td><span>e^(-RfT)</span></td>
-<td class="f" data-formula="=EXP(-D6*D5)"><span>0.9963</span></td>
+<td class="f" data-formula="=EXP(-D6*D5)"><span>0.9851</span></td>
 </tr>
 <tr><th>22</th>
 <td><span></span></td>
@@ -1390,7 +1390,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>24</th>
 <td><span>C0</span></td>
-<td class="f" data-formula="=D3*D18-D4*D21*D19"><span>7.2952</span></td>
+<td class="f" data-formula="=D3*D18-D4*D21*D19"><span>7.6242</span></td>
 </tr>
 <tr><th>25</th>
 <td><span></span></td>
@@ -1398,7 +1398,7 @@ footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
 </tr>
 <tr><th>26</th>
 <td><span>P0</span></td>
-<td class="f" data-formula="=D24+D4*EXP(-1*D6*D5)-D3"><span>2.1268</span></td>
+<td class="f" data-formula="=D24+D4*EXP(-1*D6*D5)-D3"><span>1.9542</span></td>
 </tr>
 </tbody></table></div>
 <p class="hint">Shaded cells are formulas. On a PC, download the file to change the inputs and see the results update.</p>
