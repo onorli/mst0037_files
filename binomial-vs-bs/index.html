@@ -1,0 +1,2549 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binomial model versus Black-Scholes</title><style>
+:root{--bg:#fff;--fg:#1b1b1b;--muted:#5f6b73;--line:#d9dee2;--acc:#1f78b4;--fcell:#eef6fb}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15181b;--fg:#e8eaec;--muted:#9aa5ad;--line:#333a40;--acc:#6ab0de;--fcell:#1d2a34}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}h1{font-size:1.5rem;margin:0 0 4px}h2{font-size:1.1rem;margin:28px 0 8px}
+.sec{color:var(--muted);margin:0 0 16px}p{margin:0 0 16px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 20px}
+.btn{display:inline-block;padding:10px 16px;border-radius:8px;border:1px solid var(--acc);color:var(--acc);text-decoration:none;font-weight:600}
+.btn.primary{background:var(--acc);color:#fff}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.sheet{border-collapse:collapse;font-size:14px;min-width:100%}
+.sheet th,.sheet td{border:1px solid var(--line);padding:6px 8px;white-space:nowrap;text-align:left}
+.sheet th{background:var(--line);color:var(--muted);font-weight:500;text-align:center}
+.sheet td.f{background:var(--fcell)}
+.hint{color:var(--muted);font-size:14px;margin:8px 0 0}
+.toggle{margin:12px 0 0;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;cursor:pointer}
+footer{margin-top:40px;color:var(--muted);font-size:14px}a{color:var(--acc)}
+</style></head>
+<body><main>
+<h1>Binomial model versus Black-Scholes</h1>
+<p class="sec">Options booklet, section 5.3 and 7.3 &middot; MST0037</p>
+<p>Four sheets: the Black-Scholes calculator of section 5.3 as described in the booklet; a one-step and a multi-step binomial tree with u and d derived from the volatility and the risk-neutral probability per step; and the Black-Scholes price and put value computed from the same inputs, so the two models can be compared as the number of steps grows.</p>
+<div class="btns">
+<a class="btn primary" href="https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fonorli%2Fmst0037_files%2Fmain%2Ffiles%2Fbinomial_vs_bs.xlsx">Open in browser</a>
+<a class="btn" href="https://raw.githubusercontent.com/onorli/mst0037_files/main/files/binomial_vs_bs.xlsx">Download .xlsx</a>
+</div>
+<h2>Sheet: Booklet BS</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+</tr></thead><tbody>
+<tr><th>1</th>
+<td><span>S0</span></td>
+<td><span>K</span></td>
+<td><span>r</span></td>
+<td><span>sigma</span></td>
+<td><span>T</span></td>
+</tr>
+<tr><th>2</th>
+<td><span>50</span></td>
+<td><span>45</span></td>
+<td><span>0.06</span></td>
+<td><span>0.4472</span></td>
+<td><span>0.25</span></td>
+</tr>
+<tr><th>3</th>
+<td><span>d1</span></td>
+<td><span>d2</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>4</th>
+<td class="f" data-formula="=(LN(A2/B2)+(C2+D2^2/2)*E2)/(D2*SQRT(E2))"><span>0.6501</span></td>
+<td class="f" data-formula="=A4-D2*SQRT(E2)"><span>0.4265</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>5</th>
+<td><span>C0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>6</th>
+<td class="f" data-formula="=A2*_xlfn.NORM.DIST(A4,0,1,TRUE)-B2*EXP(-C2*E2)*_xlfn.NORM.DIST(B4,0,1,TRUE)"><span>7.6243</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+</tbody></table></div>
+<h2>Sheet: Binomial one-step</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+<th>L</th>
+<th>M</th>
+<th>N</th>
+</tr></thead><tbody>
+<tr><th>3</th>
+<td><span>Continous option pricing</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>4</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Helper col</span></td>
+</tr>
+<tr><th>5</th>
+<td class="f" data-formula="=C5-1"><span>2</span></td>
+<td class="f" data-formula="=L8"><span>3</span></td>
+<td><span></span></td>
+<td><span>CT</span></td>
+<td><span>n choose k</span></td>
+<td><span>pi^k*(1-pi)^(n-k)</span></td>
+<td><span>Risk Neutral prob</span></td>
+<td><span>E(CT)</span></td>
+<td><span></span></td>
+<td><span>INPUT</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Period ref.</span></td>
+</tr>
+<tr><th>6</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>7</th>
+<td><span></span></td>
+<td class="f" data-formula="=$L$11*($L$9^N7)*($L$10^($L$8-N7))"><span>73.6498</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,C7-$L$13)"><span>28.6498</span></td>
+<td class="f" data-formula="=COMBIN($L$8,N7)"><span>1</span></td>
+<td class="f" data-formula="=($L$16^N7)*((1-$L$16)^($L$8-N7))"><span>0.1156</span></td>
+<td class="f" data-formula="=F7*G7"><span>0.1156</span></td>
+<td class="f" data-formula="=E7*H7"><span>3.3117</span></td>
+<td><span></span></td>
+<td><span>T</span></td>
+<td><span>0.25</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L8"><span>3</span></td>
+</tr>
+<tr><th>8</th>
+<td class="f" data-formula="=C7/$L$9"><span>64.7298</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>n</span></td>
+<td><span>3</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>9</th>
+<td><span></span></td>
+<td class="f" data-formula="=$L$11*($L$9^N9)*($L$10^($L$8-N9))"><span>56.8902</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,C9-$L$13)"><span>11.8902</span></td>
+<td class="f" data-formula="=COMBIN($L$8,N9)"><span>3</span></td>
+<td class="f" data-formula="=($L$16^N9)*((1-$L$16)^($L$8-N9))"><span>0.1217</span></td>
+<td class="f" data-formula="=F9*G9"><span>0.3651</span></td>
+<td class="f" data-formula="=E9*H9"><span>4.3412</span></td>
+<td><span></span></td>
+<td><span>u</span></td>
+<td class="f" data-formula="=L19"><span>1.1378</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N7-1"><span>2</span></td>
+</tr>
+<tr><th>10</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>d</span></td>
+<td class="f" data-formula="=1/L9"><span>0.8789</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>11</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=SUM(H7:H9)"><span>0.4807</span></td>
+<td class="f" data-formula="=SUM(I7:I9)"><span>7.6529</span></td>
+<td><span></span></td>
+<td><span>S0</span></td>
+<td><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>12</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>RF</span></td>
+<td><span>0.06</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>13</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>K</span></td>
+<td><span>45</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>14</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>15</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>16</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>pi</span></td>
+<td class="f" data-formula="=(EXP(L12*(L7/L8))-L10)/(L9-L10)"><span>0.4871</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>17</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>18</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Su =</span></td>
+<td><span>S0*u</span></td>
+<td class="f" data-formula="=L19*L11"><span>56.8902</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Sigma</span></td>
+<td class="f" data-formula="=SQRT(0.2)"><span>0.4472</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>19</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Sd =</span></td>
+<td><span>S0*d</span></td>
+<td class="f" data-formula="=L10*L11"><span>43.9443</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>u</span></td>
+<td class="f" data-formula="=EXP(L18*SQRT(L7/L8))"><span>1.1378</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>20</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Cu =</span></td>
+<td><span>max{0,Su-K}</span></td>
+<td class="f" data-formula="=MAX(0,G18-L13)"><span>11.8902</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>21</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Cd =</span></td>
+<td><span>max{0,Sd-k)}</span></td>
+<td><span>0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>22</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>23</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>24</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Result</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>25</th>
+<td><span>Discrete option pricing</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C0</span></td>
+<td class="f" data-formula="=I11*EXP(-L12*L7)"><span>7.539</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>26</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>27</th>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td><span></span></td>
+<td><span>CT</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>28</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>29</th>
+<td><span></span></td>
+<td><span>63</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,C29-$L$13)"><span>18</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>30</th>
+<td class="f" data-formula="=L11"><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>31</th>
+<td><span></span></td>
+<td><span>40</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,C31-$L$13)"><span>0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>32</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Definitions</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>33</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>T =</span></td>
+<td><span>Years</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>34</th>
+<td><span>r</span></td>
+<td class="f" data-formula="=L12/4"><span>0.015</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>n =</span></td>
+<td><span># periods</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>35</th>
+<td><span>delta</span></td>
+<td class="f" data-formula="=(E29-E31)/(C29-C31)"><span>0.7826</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>u =</span></td>
+<td><span>1 + up return</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>36</th>
+<td><span>D</span></td>
+<td class="f" data-formula="=(C35*C29-E29)/(1+C34)"><span>30.8417</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>d =</span></td>
+<td><span>1/u = down return</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>37</th>
+<td><span>C0</span></td>
+<td class="f" data-formula="=C35*B30-C36"><span>8.2887</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>S0 =</span></td>
+<td><span>Stock price at time 0</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>38</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>RF =</span></td>
+<td><span>Annual risk free rate</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>39</th>
+<td><span>p</span></td>
+<td><span>0.6</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Sigma =</span></td>
+<td><span>Volatility (std)</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>40</th>
+<td><span>E(R_T)</span></td>
+<td class="f" data-formula="=C39*C29+(1-C39)*C31"><span>53.8</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>k =</span></td>
+<td><span># ups</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>41</th>
+<td><span>R_S</span></td>
+<td class="f" data-formula="=C40/B30-1"><span>0.076</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>C0 =</span></td>
+<td><span>Value of call</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+</tbody></table></div>
+<h2>Sheet: Binomial</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>B</th>
+<th>C</th>
+<th>D</th>
+<th>E</th>
+<th>F</th>
+<th>G</th>
+<th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
+<th>L</th>
+<th>M</th>
+<th>N</th>
+<th>O</th>
+<th>P</th>
+<th>Q</th>
+<th>R</th>
+<th>S</th>
+<th>T</th>
+<th>U</th>
+<th>V</th>
+<th>W</th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+<th>AA</th>
+<th>AB</th>
+<th>AC</th>
+<th>AD</th>
+<th>AE</th>
+<th>AF</th>
+<th>AG</th>
+<th>AH</th>
+</tr></thead><tbody>
+<tr><th>2</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>pi^k*</span></td>
+<td><span>Risk Neu-</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Helper col</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>3</th>
+<td class="f" data-formula="=C3-1"><span>-16</span></td>
+<td><span>-15</span></td>
+<td><span>-14</span></td>
+<td><span>-13</span></td>
+<td><span>-12</span></td>
+<td><span>-11</span></td>
+<td><span>-10</span></td>
+<td><span>-9</span></td>
+<td><span>-8</span></td>
+<td><span>-7</span></td>
+<td><span>-6</span></td>
+<td><span>-5</span></td>
+<td><span>-4</span></td>
+<td><span>-3</span></td>
+<td><span>-2</span></td>
+<td><span>-1</span></td>
+<td><span>0</span></td>
+<td><span>1</span></td>
+<td class="f" data-formula="=U3-1"><span>2</span></td>
+<td class="f" data-formula="=AD6"><span>3</span></td>
+<td><span></span></td>
+<td><span>CT</span></td>
+<td><span>n choose k</span></td>
+<td><span>(1-pi)^(n-k)</span></td>
+<td><span>tral prob.</span></td>
+<td><span>E(CT)</span></td>
+<td><span></span></td>
+<td><span>INPUT</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Period ref.</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>4</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>5</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF5)*($AD$8^($AD$6-AF5))"><span>73.6498</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U5-$AD$11)"><span>28.6498</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF5)"><span>1</span></td>
+<td class="f" data-formula="=($AD$14^AF5)*((1-$AD$14)^($AD$6-AF5))"><span>0.1156</span></td>
+<td class="f" data-formula="=X5*Y5"><span>0.1156</span></td>
+<td class="f" data-formula="=W5*Z5"><span>3.3117</span></td>
+<td><span></span></td>
+<td><span>T</span></td>
+<td><span>0.25</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AD6"><span>3</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>6</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U5/$AD$7"><span>64.7298</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>n</span></td>
+<td><span>3</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>7</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T6/$AD$7"><span>56.8902</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF7)*($AD$8^($AD$6-AF7))"><span>56.8902</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U7-$AD$11)"><span>11.8902</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF7)"><span>3</span></td>
+<td class="f" data-formula="=($AD$14^AF7)*((1-$AD$14)^($AD$6-AF7))"><span>0.1217</span></td>
+<td class="f" data-formula="=X7*Y7"><span>0.3651</span></td>
+<td class="f" data-formula="=W7*Z7"><span>4.3412</span></td>
+<td><span></span></td>
+<td><span>u</span></td>
+<td class="f" data-formula="=AD17"><span>1.1378</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF5-1"><span>2</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>8</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S7/$AD$7"><span>50</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U7/$AD$7"><span>50</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>d</span></td>
+<td class="f" data-formula="=1/AD7"><span>0.8789</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AD10*(AD5/AD6)"><span>0.005</span></td>
+</tr>
+<tr><th>9</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R8/$AD$7"><span>43.9443</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T8/$AD$7"><span>43.9443</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF9)*($AD$8^($AD$6-AF9))"><span>43.9443</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U9-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF9)"><span>3</span></td>
+<td class="f" data-formula="=($AD$14^AF9)*((1-$AD$14)^($AD$6-AF9))"><span>0.1281</span></td>
+<td class="f" data-formula="=X9*Y9"><span>0.3844</span></td>
+<td class="f" data-formula="=W9*Z9"><span>0</span></td>
+<td><span></span></td>
+<td><span>S0</span></td>
+<td><span>50</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF7-1"><span>1</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=EXP(AH8) - AD8"><span>0.1261</span></td>
+</tr>
+<tr><th>10</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q9/$AD$7"><span>38.6221</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S9/$AD$7"><span>38.6221</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U9/$AD$7"><span>38.6221</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>r</span></td>
+<td><span>0.06</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=(AD7-AD8)"><span>0.2589</span></td>
+</tr>
+<tr><th>11</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P10/$AD$7"><span>33.9444</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R10/$AD$7"><span>33.9444</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T10/$AD$7"><span>33.9444</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF11)*($AD$8^($AD$6-AF11))"><span>33.9444</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U11-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF11)"><span>1</span></td>
+<td class="f" data-formula="=($AD$14^AF11)*((1-$AD$14)^($AD$6-AF11))"><span>0.1349</span></td>
+<td class="f" data-formula="=X11*Y11"><span>0.1349</span></td>
+<td class="f" data-formula="=W11*Z11"><span>0</span></td>
+<td><span></span></td>
+<td><span>K</span></td>
+<td><span>45</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF9-1"><span>0</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AH9/AH10"><span>0.4871</span></td>
+</tr>
+<tr><th>12</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O11/$AD$7"><span>29.8333</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q11/$AD$7"><span>29.8333</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S11/$AD$7"><span>29.8333</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U11/$AD$7"><span>29.8333</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=0.52^3"><span>0.1406</span></td>
+</tr>
+<tr><th>13</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N12/$AD$7"><span>26.2201</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P12/$AD$7"><span>26.2201</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R12/$AD$7"><span>26.2201</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T12/$AD$7"><span>26.2201</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF13)*($AD$8^($AD$6-AF13))"><span>26.2201</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U13-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF13)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF13)*((1-$AD$14)^($AD$6-AF13))"><span>0.142</span></td>
+<td class="f" data-formula="=X13*Y13"><span>#NUM!</span></td>
+<td class="f" data-formula="=W13*Z13"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF11-1"><span>-1</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AH12*29"><span>4.0776</span></td>
+</tr>
+<tr><th>14</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M13/$AD$7"><span>23.0445</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O13/$AD$7"><span>23.0445</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q13/$AD$7"><span>23.0445</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S13/$AD$7"><span>23.0445</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U13/$AD$7"><span>23.0445</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>pi</span></td>
+<td class="f" data-formula="=(EXP(AD10*(AD5/AD6))-AD8)/(AD7-AD8)"><span>0.4871</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=3*0.52^2*(1-0.52)"><span>0.3894</span></td>
+</tr>
+<tr><th>15</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L14/$AD$7"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N14/$AD$7"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P14/$AD$7"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R14/$AD$7"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T14/$AD$7"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF15)*($AD$8^($AD$6-AF15))"><span>20.2535</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U15-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF15)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF15)*((1-$AD$14)^($AD$6-AF15))"><span>0.1495</span></td>
+<td class="f" data-formula="=X15*Y15"><span>#NUM!</span></td>
+<td class="f" data-formula="=W15*Z15"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF13-1"><span>-2</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AH14*12"><span>4.6725</span></td>
+</tr>
+<tr><th>16</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U15/$AD$7"><span>17.8005</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Sigma</span></td>
+<td class="f" data-formula="=SQRT(0.2)"><span>0.4472</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AH13+AH15"><span>8.7501</span></td>
+</tr>
+<tr><th>17</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T16/$AD$7"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF17)*($AD$8^($AD$6-AF17))"><span>15.6446</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U17-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF17)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF17)*((1-$AD$14)^($AD$6-AF17))"><span>0.1574</span></td>
+<td class="f" data-formula="=X17*Y17"><span>#NUM!</span></td>
+<td class="f" data-formula="=W17*Z17"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>u</span></td>
+<td class="f" data-formula="=EXP(AD16*SQRT(AD5/AD6))"><span>1.1378</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF15-1"><span>-3</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AH16/(1+0.015)"><span>8.6208</span></td>
+</tr>
+<tr><th>18</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U17/$AD$7"><span>13.7499</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>19</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T18/$AD$7"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF19)*($AD$8^($AD$6-AF19))"><span>12.0846</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U19-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF19)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF19)*((1-$AD$14)^($AD$6-AF19))"><span>0.1658</span></td>
+<td class="f" data-formula="=X19*Y19"><span>#NUM!</span></td>
+<td class="f" data-formula="=W19*Z19"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF17-1"><span>-4</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=(EXP(0.015/3)-0.8789)/(1.1378-0.8789)"><span>0.4871</span></td>
+</tr>
+<tr><th>20</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U19/$AD$7"><span>10.621</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>21</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=F20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T20/$AD$7"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF21)*($AD$8^($AD$6-AF21))"><span>9.3346</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U21-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF21)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF21)*((1-$AD$14)^($AD$6-AF21))"><span>0.1745</span></td>
+<td class="f" data-formula="=X21*Y21"><span>#NUM!</span></td>
+<td class="f" data-formula="=W21*Z21"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF19-1"><span>-5</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>22</th>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=E21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U21/$AD$7"><span>8.2041</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Result</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=0.4871^3 * 28.7"><span>3.3169</span></td>
+</tr>
+<tr><th>23</th>
+<td><span></span></td>
+<td class="f" data-formula="=D22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=F22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T22/$AD$7"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF23)*($AD$8^($AD$6-AF23))"><span>7.2104</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U23-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF23)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF23)*((1-$AD$14)^($AD$6-AF23))"><span>0.1837</span></td>
+<td class="f" data-formula="=X23*Y23"><span>#NUM!</span></td>
+<td class="f" data-formula="=W23*Z23"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>C0</span></td>
+<td class="f" data-formula="=AA46*EXP(-AD10*AD5)"><span>7.539</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF21-1"><span>-6</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=3*(1-0.4871)*0.4871^2 * 11.9"><span>4.3445</span></td>
+</tr>
+<tr><th>24</th>
+<td class="f" data-formula="=C23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=E23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U23/$AD$7"><span>6.3372</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=(AH22+AH23)/EXP(0.015)"><span>7.5473</span></td>
+</tr>
+<tr><th>25</th>
+<td><span></span></td>
+<td class="f" data-formula="=D24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=F24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T24/$AD$7"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF25)*($AD$8^($AD$6-AF25))"><span>5.5697</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U25-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF25)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF25)*((1-$AD$14)^($AD$6-AF25))"><span>0.1934</span></td>
+<td class="f" data-formula="=X25*Y25"><span>#NUM!</span></td>
+<td class="f" data-formula="=W25*Z25"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>Binomial - BlackScholes</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF23-1"><span>-7</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>26</th>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=E25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U25/$AD$7"><span>4.8951</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AD23-&#x27;Black-Scholes&#x27;!D24"><span>-0.0853</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>27</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=F26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T26/$AD$7"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF27)*($AD$8^($AD$6-AF27))"><span>4.3022</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U27-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF27)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF27)*((1-$AD$14)^($AD$6-AF27))"><span>0.2037</span></td>
+<td class="f" data-formula="=X27*Y27"><span>#NUM!</span></td>
+<td class="f" data-formula="=W27*Z27"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF25-1"><span>-8</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>28</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=G27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U27/$AD$7"><span>3.7812</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>29</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=H28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T28/$AD$7"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF29)*($AD$8^($AD$6-AF29))"><span>3.3232</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U29-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF29)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF29)*((1-$AD$14)^($AD$6-AF29))"><span>0.2144</span></td>
+<td class="f" data-formula="=X29*Y29"><span>#NUM!</span></td>
+<td class="f" data-formula="=W29*Z29"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF27-1"><span>-9</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>30</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=I29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U29/$AD$7"><span>2.9207</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>Definitions</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>31</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=J30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T30/$AD$7"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF31)*($AD$8^($AD$6-AF31))"><span>2.567</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U31-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF31)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF31)*((1-$AD$14)^($AD$6-AF31))"><span>0.2258</span></td>
+<td class="f" data-formula="=X31*Y31"><span>#NUM!</span></td>
+<td class="f" data-formula="=W31*Z31"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>T =</span></td>
+<td><span>Years</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF29-1"><span>-10</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>32</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=K31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U31/$AD$7"><span>2.2561</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>n =</span></td>
+<td><span># periods</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>33</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=L32/$AD$7"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N32/$AD$7"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P32/$AD$7"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R32/$AD$7"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T32/$AD$7"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF33)*($AD$8^($AD$6-AF33))"><span>1.9829</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U33-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF33)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF33)*((1-$AD$14)^($AD$6-AF33))"><span>0.2377</span></td>
+<td class="f" data-formula="=X33*Y33"><span>#NUM!</span></td>
+<td class="f" data-formula="=W33*Z33"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>u =</span></td>
+<td><span>1 + up return</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF31-1"><span>-11</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>34</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=M33/$AD$7"><span>1.7427</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O33/$AD$7"><span>1.7427</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q33/$AD$7"><span>1.7427</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S33/$AD$7"><span>1.7427</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U33/$AD$7"><span>1.7427</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>d =</span></td>
+<td><span>1/u = down return</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>35</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=N34/$AD$7"><span>1.5316</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P34/$AD$7"><span>1.5316</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R34/$AD$7"><span>1.5316</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T34/$AD$7"><span>1.5316</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF35)*($AD$8^($AD$6-AF35))"><span>1.5316</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U35-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF35)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF35)*((1-$AD$14)^($AD$6-AF35))"><span>0.2503</span></td>
+<td class="f" data-formula="=X35*Y35"><span>#NUM!</span></td>
+<td class="f" data-formula="=W35*Z35"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>S0 =</span></td>
+<td><span>Stock price at time 0</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF33-1"><span>-12</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>36</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=O35/$AD$7"><span>1.3461</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q35/$AD$7"><span>1.3461</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S35/$AD$7"><span>1.3461</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U35/$AD$7"><span>1.3461</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>RF =</span></td>
+<td><span>Annual risk free rate</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>37</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=P36/$AD$7"><span>1.1831</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R36/$AD$7"><span>1.1831</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T36/$AD$7"><span>1.1831</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF37)*($AD$8^($AD$6-AF37))"><span>1.1831</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U37-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF37)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF37)*((1-$AD$14)^($AD$6-AF37))"><span>0.2635</span></td>
+<td class="f" data-formula="=X37*Y37"><span>#NUM!</span></td>
+<td class="f" data-formula="=W37*Z37"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>Sigma =</span></td>
+<td><span>Volatility (std)</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF35-1"><span>-13</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>38</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=Q37/$AD$7"><span>1.0398</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S37/$AD$7"><span>1.0398</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U37/$AD$7"><span>1.0398</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>k =</span></td>
+<td><span># ups</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>39</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=R38/$AD$7"><span>0.9139</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T38/$AD$7"><span>0.9139</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF39)*($AD$8^($AD$6-AF39))"><span>0.9139</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U39-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF39)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF39)*((1-$AD$14)^($AD$6-AF39))"><span>0.2774</span></td>
+<td class="f" data-formula="=X39*Y39"><span>#NUM!</span></td>
+<td class="f" data-formula="=W39*Z39"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span>C0 =</span></td>
+<td><span>Value of call</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF37-1"><span>-14</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>40</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=S39/$AD$7"><span>0.8032</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U39/$AD$7"><span>0.8032</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>41</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=T40/$AD$7"><span>0.7059</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF41)*($AD$8^($AD$6-AF41))"><span>0.7059</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U41-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF41)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF41)*((1-$AD$14)^($AD$6-AF41))"><span>0.2921</span></td>
+<td class="f" data-formula="=X41*Y41"><span>#NUM!</span></td>
+<td class="f" data-formula="=W41*Z41"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF39-1"><span>-15</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>42</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=U41/$AD$7"><span>0.6204</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>43</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=$AD$9*($AD$7^AF43)*($AD$8^($AD$6-AF43))"><span>0.5453</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=MAX(0,U43-$AD$11)"><span>0</span></td>
+<td class="f" data-formula="=COMBIN($AD$6,AF43)"><span>#NUM!</span></td>
+<td class="f" data-formula="=($AD$14^AF43)*((1-$AD$14)^($AD$6-AF43))"><span>0.3075</span></td>
+<td class="f" data-formula="=X43*Y43"><span>#NUM!</span></td>
+<td class="f" data-formula="=W43*Z43"><span>#NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=AF41-1"><span>-16</span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>44</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>45</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>46</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td class="f" data-formula="=SUM(IF(ISNUMBER(X5:X43),X5:X43))"><span>8</span></td>
+<td><span></span></td>
+<td class="f" data-formula="=SUM(IF(ISNUMBER(Z5:Z43),Z5:Z43))"><span>1</span></td>
+<td class="f" data-formula="=SUM(IF(ISNUMBER(AA5:AA43),AA5:AA43))"><span>7.6529</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>47</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>48</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>The above sum must be entered using shift+ctrl+enter on IBM PC</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>49</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>The above sum must be entered using command+enter on a mac</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>50</th>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span>This sums even when there are non-numerical values in the column, such as #NUM!</span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+</tbody></table></div>
+<h2>Sheet: Black-Scholes</h2>
+<div class="wrap"><table class="sheet"><thead><tr><th></th>
+<th>C</th>
+<th>D</th>
+</tr></thead><tbody>
+<tr><th>2</th>
+<td><span>Collected from the &quot;Binomial sheet&quot;</span></td>
+<td><span></span></td>
+</tr>
+<tr><th>3</th>
+<td><span>S0</span></td>
+<td class="f" data-formula="=Binomial!AD9"><span>50</span></td>
+</tr>
+<tr><th>4</th>
+<td><span>K</span></td>
+<td class="f" data-formula="=Binomial!AD11"><span>45</span></td>
+</tr>
+<tr><th>5</th>
+<td><span>T</span></td>
+<td class="f" data-formula="=Binomial!AD5"><span>0.25</span></td>
+</tr>
+<tr><th>6</th>
+<td><span>RF</span></td>
+<td class="f" data-formula="=Binomial!AD10"><span>0.06</span></td>
+</tr>
+<tr><th>7</th>
+<td><span>Volatility</span></td>
+<td class="f" data-formula="=Binomial!AD16"><span>0.4472</span></td>
+</tr>
+<tr><th>8</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>9</th>
+<td><span>Vol^2</span></td>
+<td class="f" data-formula="=D7^2"><span>0.2</span></td>
+</tr>
+<tr><th>10</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>11</th>
+<td><span>ln(S/K)</span></td>
+<td class="f" data-formula="=LN(D3/D4)"><span>0.1054</span></td>
+</tr>
+<tr><th>12</th>
+<td><span>(Rf+vol/2)T</span></td>
+<td class="f" data-formula="=(D6+D9/2)*D5"><span>0.04</span></td>
+</tr>
+<tr><th>13</th>
+<td><span>sqrt(vol*T)</span></td>
+<td class="f" data-formula="=SQRT(D9*D5)"><span>0.2236</span></td>
+</tr>
+<tr><th>14</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>15</th>
+<td><span>d1</span></td>
+<td class="f" data-formula="=(D11+D12)/D13"><span>0.6501</span></td>
+</tr>
+<tr><th>16</th>
+<td><span>d2</span></td>
+<td class="f" data-formula="=D15-D13"><span>0.4265</span></td>
+</tr>
+<tr><th>17</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>18</th>
+<td><span>N(d1)</span></td>
+<td class="f" data-formula="=_xlfn.NORM.DIST(D15,0,1,1)"><span>0.7422</span></td>
+</tr>
+<tr><th>19</th>
+<td><span>N(d2)</span></td>
+<td class="f" data-formula="=_xlfn.NORM.DIST(D16,0,1,1)"><span>0.6651</span></td>
+</tr>
+<tr><th>20</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>21</th>
+<td><span>e^(-RfT)</span></td>
+<td class="f" data-formula="=EXP(-D6*D5)"><span>0.9851</span></td>
+</tr>
+<tr><th>22</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>23</th>
+<td><span>Result</span></td>
+<td><span></span></td>
+</tr>
+<tr><th>24</th>
+<td><span>C0</span></td>
+<td class="f" data-formula="=D3*D18-D4*D21*D19"><span>7.6243</span></td>
+</tr>
+<tr><th>25</th>
+<td><span></span></td>
+<td><span></span></td>
+</tr>
+<tr><th>26</th>
+<td><span>P0</span></td>
+<td class="f" data-formula="=D24+D4*EXP(-1*D6*D5)-D3"><span>1.9543</span></td>
+</tr>
+</tbody></table></div>
+<p class="hint">Shaded cells are formulas. On a PC, download the file to change the inputs and see the results update.</p>
+<button class="toggle" data-on="0">Show formulas</button>
+<footer><a href="https://onorli.github.io/mst0037_files/">All course files</a></footer>
+</main><script>
+document.querySelector('.toggle').addEventListener('click',function(){
+  var on=this.dataset.on==='1';document.querySelectorAll('td.f').forEach(function(td){
+    td.querySelector('span').textContent=on?td.dataset.value:td.dataset.formula;});
+  this.dataset.on=on?'0':'1';this.textContent=on?'Show formulas':'Show values';});
+document.querySelectorAll('td.f').forEach(function(td){td.dataset.value=td.querySelector('span').textContent;});
+</script></body></html>

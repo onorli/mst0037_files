@@ -26,6 +26,8 @@ PAGES = {
         "Three-step binomial tree for the stock price built from the up factor u and the down factor d = 1/u. Each node is the previous node times u or d."),
     "option_more_steps.xlsx": ("option-more-steps", "Call option price: more steps", "4.2",
         "Values the call on the three-step tree. The Price sheet holds the stock tree, the Option sheet the payoffs at the final nodes, the risk-neutral probabilities of reaching them and the discounted option value."),
+    "binomial_vs_bs.xlsx": ("binomial-vs-bs", "Binomial model versus Black-Scholes", "5.3 and 7.3",
+        "Four sheets: the Black-Scholes calculator of section 5.3 as described in the booklet; a one-step and a multi-step binomial tree with u and d derived from the volatility and the risk-neutral probability per step; and the Black-Scholes price and put value computed from the same inputs, so the two models can be compared as the number of steps grows."),
 }
 
 def col_index(ref):

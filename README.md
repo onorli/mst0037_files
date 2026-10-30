@@ -21,5 +21,6 @@ spreadsheet, run `python3 build_pages.py` and commit the result. New files need 
 | 3.2 Call option price: risk-neutral approach | `files/option_2per_risk_neutral.xlsx` | `/option-2per-risk-neutral/` |
 | 4.1 Stock price: more steps | `files/stock_more_steps.xlsx` | `/stock-more-steps/` |
 | 4.2 Call option price: more steps | `files/option_more_steps.xlsx` | `/option-more-steps/` |
+| 5.3 Black-Scholes spreadsheet, 7.3 Risk and return | `files/binomial_vs_bs.xlsx` | `/binomial-vs-bs/` |
 
 To update a file, replace it under the same name and push. The QR codes keep working.
